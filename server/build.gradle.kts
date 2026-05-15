@@ -16,3 +16,14 @@ dependencies {
 
     testImplementation("org.springframework.boot:spring-boot-starter-webmvc-test")
 }
+
+tasks.register<Copy>("copyFrontend") {
+    dependsOn(":web:buildFrontend")
+
+    from("../web/dist")
+    into("src/main/resources/static")
+}
+
+tasks.named("processResources") {
+    dependsOn("copyFrontend")
+}
