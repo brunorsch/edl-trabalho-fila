@@ -10,7 +10,7 @@ java {
 }
 
 dependencies {
-    implementation(project(":core"))
+    implementation(project(":core")) // Importamos o core como dependência
 
     implementation("org.springframework.boot:spring-boot-starter-webmvc")
 
@@ -18,12 +18,12 @@ dependencies {
 }
 
 tasks.register<Copy>("copyFrontend") {
-    dependsOn(":web:buildFrontend")
+    dependsOn(":web:buildFrontend") // Tarefa de copy que depende da tarefa de build do front
 
-    from("../web/dist")
-    into("src/main/resources/static")
+    from("../web/dist") // Copia o build do front
+    into("src/main/resources/static") // Para a pasta de resources do Spring
 }
 
-tasks.named("processResources") {
-    dependsOn("copyFrontend")
+tasks.named("processResources") { // Essa task sempre roda no build do spring
+    dependsOn("copyFrontend") // Depende do copyFrontend, então vai rodar o build antes de iniciar o build da jar
 }
