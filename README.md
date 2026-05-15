@@ -7,7 +7,7 @@ Cada pasta representa um módulo independente:
 - `server` → backend Spring Boot
 - `web` → frontend React
 
-Dessa forma, conseguimos separar o código Java puro do core em um projeto separado e
+Dessa forma, conseguimos separar o código Java puro do core em um componente separado e
 ter um step de build unificado entre os 3 componentes, onde tudo acaba empacotado numa única jar
 que roda o servidor.
 
