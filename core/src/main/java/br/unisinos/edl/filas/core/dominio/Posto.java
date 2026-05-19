@@ -1,4 +1,4 @@
-package br.unisinos.edl.filas.core;
+package br.unisinos.edl.filas.core.dominio;
 
 import java.util.Optional;
 
