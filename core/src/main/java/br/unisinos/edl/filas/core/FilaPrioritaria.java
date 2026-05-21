@@ -6,6 +6,7 @@ import java.util.List;
 import br.unisinos.edl.filas.core.dominio.Senha;
 
 public class FilaPrioritaria {
+    private int proximoNumero = 1;
     private final Fila<Senha> filaNormal;
     private final Fila<Senha> filaPrioridade;
 
@@ -53,5 +54,13 @@ public class FilaPrioritaria {
 
     public int totalPrioridade() {
         return 0; // TODO: Implementar
+    }
+
+    public int espiarProximoNumero() {
+        return proximoNumero;
+    }
+
+    public int proximoNumero() {
+        return proximoNumero++;
     }
 }
