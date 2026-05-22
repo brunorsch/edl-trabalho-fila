@@ -1,23 +1,60 @@
 package br.unisinos.edl.filas.core;
 
+import br.unisinos.edl.filas.core.No;
+
+import java.util.ArrayList;
+import java.util.List;
+
 public class Pilha<T> {
+    private No<T> topo;
+    private int tamanho;
+
+    public Pilha() {
+        this.topo = null;
+        this.tamanho = 0;
+
+    }
+
     public void empilhar(T elemento) {
-        // TODO: Implementar
+        No<T> novoNo = new No<>(elemento);
+        novoNo.setProximo(topo);
+        topo = novoNo;
+        tamanho++;
     }
 
     public T desempilhar() {
-        return null; // TODO: Implementar
+        if (estaVazia()) return null;
+        T conteudo = topo.getDado();
+        topo = topo.getProximo();
+        tamanho--;
+        return conteudo;
     }
+
 
     public T espiar() {
-        return null; // TODO: Implementar
+        if (estaVazia()) return null;
+        return topo.getDado();
     }
 
-    public boolean isVazio() {
-        return true; // TODO: Implementar
+    public boolean estaVazia() {
+        return topo == null;
     }
 
-    public int tamanho() {
-        return 0; // TODO: Implementar
+    public int getTamanho() {
+        return tamanho;
+    }
+
+
+    public List<T> paraLista(int limite) {
+        List<T> lista = new ArrayList<>();
+        No<T> atual = topo;
+        int contador = 0;
+
+        while (atual != null && (limite == 0 || contador < limite)) {
+            lista.add(atual.getDado());
+            atual = atual.getProximo();
+            contador++;
+        }
+        return lista;
     }
 }
