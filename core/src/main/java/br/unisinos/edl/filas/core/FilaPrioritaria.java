@@ -6,6 +6,7 @@ import java.util.List;
 import br.unisinos.edl.filas.core.dominio.Senha;
 
 public class FilaPrioritaria {
+    private static FilaPrioritaria singleton;
     private int proximoNumero = 1;
     private final Fila<Senha> filaNormal;
     private final Fila<Senha> filaPrioridade;
@@ -13,6 +14,10 @@ public class FilaPrioritaria {
     public FilaPrioritaria() {
         this.filaNormal = new Fila<>();
         this.filaPrioridade = new Fila<>();
+    }
+
+    public static FilaPrioritaria get() {
+        return singleton;
     }
 
     public Fila<Senha> getFilaNormal() {
