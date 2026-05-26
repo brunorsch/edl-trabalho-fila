@@ -26,6 +26,14 @@ public class Posto {
         return senha != null;
     }
 
+    public void ocupar(final Senha senha) {
+        if (isEmAtendimento()) {
+            throw new IllegalStateException("O posto já está ocupado.");
+        }
+        this.senha = senha;
+        this.senha.senhaEmAtendimento(); // marca a senha como em atendimento
+    }
+
     public Senha finalizarAtendimento() {
         if(!isEmAtendimento()) {
             throw new IllegalStateException("Não há senha em atendimento para finalizar.");

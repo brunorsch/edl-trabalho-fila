@@ -3,6 +3,23 @@ package br.unisinos.edl.filas.core;
 import java.util.function.Predicate;
 
 public class Fila<T> {
+<<<<<<< Updated upstream
+=======
+    private No<T> inicio;
+    private No<T> fim;
+    private int tamanho;
+
+    public Fila() {
+        this.inicio = null;
+        this.fim = null;
+        this.tamanho = 0;
+    }
+
+    public No<T> getInicio() {
+        this.inicio = inicio;
+        return inicio;
+    }
+>>>>>>> Stashed changes
 
     public void enfileirar(T elemento) {
         // TODO: Implementar
