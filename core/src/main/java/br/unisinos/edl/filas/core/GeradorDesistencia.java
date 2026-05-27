@@ -7,18 +7,20 @@ import java.util.Random;
 
 public class GeradorDesistencia {
     public void calcularDesistencias() {
-        FilaPrioritaria<Senha> fila = new FilaPrioritaria<>();
+        FilaPrioritaria fila = FilaPrioritaria.getInstance();
         List<Senha> aguardando = new ArrayList<>();
 
         int total = fila.getTamanhoTotal();
 
         for (int i = 0; i < total; i++) {
             Senha s = fila.desenfileirar();
-            if (s.getStatus() == Senha.Status.AGUARDANDO) {
+            if (s != null && s.getStatus() == Senha.Status.AGUARDANDO) {
                 aguardando.add(s);
             }
             // Respeitar se é prioritário ou não
-            fila.enfileirar(s, s.ehPrioritario());
+            if (s != null) {
+                fila.enfileirar(s, s.ehPrioritario());
+            }
         }
 
         Random rand = new Random();

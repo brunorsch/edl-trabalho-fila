@@ -31,9 +31,9 @@ public class GeradorSenha {
                 numero = ++contadorPrioritaria;
             } else {
                 numero = ++contadorNormal;
-
-                senhas.add(new Senha(numero, tipo));
             }
+
+            senhas.add(new Senha(numero, tipo));
         }
         return senhas;
     }

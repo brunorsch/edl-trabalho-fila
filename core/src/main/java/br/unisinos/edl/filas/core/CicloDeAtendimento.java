@@ -13,12 +13,12 @@ public class CicloDeAtendimento {
             List<Senha> atendidas
     ) {}
 
-    private final FilaPrioritaria<Senha> fila;
+    private final FilaPrioritaria fila;
     private final GeradorSenha geradorSenha;
     private final GeradorDesistencia geradorDesistencia;
     private final List<Senha> pilhaAtendidas;
 
-    public CicloDeAtendimento(FilaPrioritaria<Senha> fila) {
+    public CicloDeAtendimento(FilaPrioritaria fila) {
         this.fila = fila;
         this.geradorSenha = new GeradorSenha();
         this.geradorDesistencia = new GeradorDesistencia();

@@ -15,7 +15,6 @@ public class Fila<T> {
     }
 
     public No<T> getInicio() {
-        this.inicio = inicio;
         return inicio;
     }
 

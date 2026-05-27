@@ -19,7 +19,7 @@ public class GerenciadorPosto {
 
     public Optional<Posto> getPostoLivre() {
         return postos.stream()
-                .filter(Posto::isEmAtendimento)
+                .filter(p -> !p.isEmAtendimento())
                 .findFirst();
     }
 
