@@ -5,29 +5,32 @@ import java.util.List;
 
 import br.unisinos.edl.filas.core.dominio.Senha;
 
-<<<<<<< Updated upstream
 public class FilaPrioritaria {
     private static FilaPrioritaria singleton;
     private int proximoNumero = 1;
     private final Fila<Senha> filaNormal;
     private final Fila<Senha> filaPrioridade;
-=======
+
 public class FilaPrioritaria<T> {
     private static FilaPrioritaria<Senha> instancia; //Criar singleton
     private Fila<T> filaNormal;
     private Fila<T> filaPrioritaria;
     private int contadorNormaisChamadas;
->>>>>>> Stashed changes
+
+public class FilaPrioritaria<T> {
+    private Fila<T> filaNormal;
+    private Fila<T> filaPrioritaria;
+    private int contadorNormaisChamadas;
 
     public FilaPrioritaria() {
         this.filaNormal = new Fila<>();
-        this.filaPrioridade = new Fila<>();
+        this.filaPrioritaria = new Fila<>();
+        this.contadorNormaisChamadas = 0;
     }
 
-<<<<<<< Updated upstream
     public static FilaPrioritaria get() {
         return singleton;
-=======
+
     public static FilaPrioritaria<Senha> get() {
         if (instancia == null) {
             instancia = new FilaPrioritaria<>();
@@ -49,64 +52,74 @@ public class FilaPrioritaria<T> {
         } else {
             filaNormal.enfileirar(elemento);
         }
->>>>>>> Stashed changes
-    }
+        
+    public T desenfileirar() {
+        if (!filaNormal.estaVazia() && !filaPrioritaria.estaVazia()) {
+            if (contadorNormaisChamadas < 2) {
+                contadorNormaisChamadas++;
+                return filaNormal.desenfileirar();
+            } else {
+                contadorNormaisChamadas = 0;
+                return filaPrioritaria.desenfileirar();
+            }
+        }
 
-    public Fila<Senha> getFilaNormal() {
-        return filaNormal;
-    }
+        if (!filaPrioritaria.estaVazia()) {
+            contadorNormaisChamadas = 0;
+            return filaPrioritaria.desenfileirar();
+        }
 
-    public Fila<Senha> getFilaPrioridade() {
-        return filaPrioridade;
-    }
 
-    public void enfileirar(Senha senha) {
-        // TODO: Implementar
-    }
+        if (!filaNormal.estaVazia()) {
 
-    public Senha proximaSenha() {
-        // TODO: Implementar
-        return null;
-    }
-
-<<<<<<< Updated upstream
     public List<Senha> proximasSenhas(int quantidade) {
         return new ArrayList<>();
-=======
+
     public T espiarProximo() {
         if (!filaNormal.estaVazia() && !filaPrioritaria.estaVazia()) {
             return (contadorNormaisChamadas < 2) ? filaNormal.espiar() : filaPrioritaria.espiar();
         }
         if (!filaPrioritaria.estaVazia()) return filaPrioritaria.espiar();
         return filaNormal.espiar();
->>>>>>> Stashed changes
+
+            if (contadorNormaisChamadas < 2) {
+                contadorNormaisChamadas++;
+            }
+            return filaNormal.desenfileirar();
+        }
+
+        return null;
     }
 
-    public void removerPorNumero(int numeroSenha) {
-        // TODO: Implementar esse ou o de baixo (O de baixo é mais top)
+
+    public T espiarProximo() {
+        if (!filaNormal.estaVazia() && !filaPrioritaria.estaVazia()) {
+            return (contadorNormaisChamadas < 2) ? filaNormal.espiar() : filaPrioritaria.espiar();
+        }
+        if (!filaPrioritaria.estaVazia()) return filaPrioritaria.espiar();
+        return filaNormal.espiar();
     }
 
-    public void remover(Senha senha) {
-        // TODO: Implementar esse ou o de cima (Esse é mais top)
+    public boolean removerElemento(T elemento) {
+        if (filaNormal.removerElemento(elemento)) {
+            return true;
+        }
+        return filaPrioritaria.removerElemento(elemento);
     }
 
-    public int totalAguardando() {
-        return 0; // TODO: Implementar
+    public boolean estaVazia() {
+        return filaNormal.estaVazia() && filaPrioritaria.estaVazia();
     }
 
-    public int totalNormal() {
-        return 0; // TODO: Implementar
+    public int getTamanhoTotal() {
+        return filaNormal.getTamanho() + filaPrioritaria.getTamanho();
     }
 
-    public int totalPrioridade() {
-        return 0; // TODO: Implementar
+    public int getTamanhoNormal() {
+        return filaNormal.getTamanho();
     }
 
-    public int espiarProximoNumero() {
-        return proximoNumero;
-    }
-
-    public int proximoNumero() {
-        return proximoNumero++;
+    public int getTamanhoPrioritaria() {
+        return filaPrioritaria.getTamanho();
     }
 }
