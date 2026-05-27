@@ -5,34 +5,26 @@ import java.util.List;
 
 import br.unisinos.edl.filas.core.dominio.Senha;
 
-public class FilaPrioritaria {
-    private static FilaPrioritaria singleton;
-    private final Fila<Senha> filaNormal;
-    private final Fila<Senha> filaPrioritaria;
+public class FilaPrioritaria<T> {
+    private Fila<T> filaNormal;
+    private Fila<T> filaPrioritaria;
     private int contadorNormaisChamadas;
 
-    private FilaPrioritaria() {
+    public FilaPrioritaria() {
         this.filaNormal = new Fila<>();
         this.filaPrioritaria = new Fila<>();
         this.contadorNormaisChamadas = 0;
     }
 
-    public static FilaPrioritaria getInstance() {
-        if (singleton == null) {
-            singleton = new FilaPrioritaria();
-        }
-        return singleton;
-    }
-
-    public Fila<Senha> getFilaPrioritaria() {
+    public Fila<T> getFilaPrioritaria() {
         return filaPrioritaria;
     }
 
-    public Fila<Senha> getFilaNormal() {
+    public Fila<T> getFilaNormal() {
         return filaNormal;
     }
 
-    public void enfileirar(Senha elemento, boolean ehPrioritario) {
+    public void enfileirar(T elemento, boolean ehPrioritario) {
         if (ehPrioritario) {
             filaPrioritaria.enfileirar(elemento);
         } else {
@@ -40,11 +32,7 @@ public class FilaPrioritaria {
         }
     }
 
-    public Senha desenfileirar() {
-        if (filaNormal.estaVazia() && filaPrioritaria.estaVazia()) {
-            return null;
-        }
-
+    public T desenfileirar() {
         if (!filaNormal.estaVazia() && !filaPrioritaria.estaVazia()) {
             if (contadorNormaisChamadas < 2) {
                 contadorNormaisChamadas++;
@@ -61,45 +49,24 @@ public class FilaPrioritaria {
         }
 
         if (!filaNormal.estaVazia()) {
-            contadorNormaisChamadas++;
+            if (contadorNormaisChamadas < 2) {
+                contadorNormaisChamadas++;
+            }
             return filaNormal.desenfileirar();
         }
 
         return null;
     }
 
-    public List<Senha> proximasSenhas(int quantidade) {
-        List<Senha> senhas = new ArrayList<>();
-        int count = 0;
-        
-        while (count < quantidade && (!filaNormal.estaVazia() || !filaPrioritaria.estaVazia())) {
-            Senha proxima = desenfileirar();
-            if (proxima != null) {
-                senhas.add(proxima);
-                count++;
-            }
-        }
-        
-        return senhas;
-    }
-
-    public Senha espiarProximo() {
-        if (filaNormal.estaVazia() && filaPrioritaria.estaVazia()) {
-            return null;
-        }
-
+    public T espiarProximo() {
         if (!filaNormal.estaVazia() && !filaPrioritaria.estaVazia()) {
             return (contadorNormaisChamadas < 2) ? filaNormal.espiar() : filaPrioritaria.espiar();
         }
-        
-        if (!filaPrioritaria.estaVazia()) {
-            return filaPrioritaria.espiar();
-        }
-        
+        if (!filaPrioritaria.estaVazia()) return filaPrioritaria.espiar();
         return filaNormal.espiar();
     }
 
-    public boolean removerElemento(Senha elemento) {
+    public boolean removerElemento(T elemento) {
         if (filaNormal.removerElemento(elemento)) {
             return true;
         }
@@ -122,3 +89,4 @@ public class FilaPrioritaria {
         return filaPrioritaria.getTamanho();
     }
 }
+

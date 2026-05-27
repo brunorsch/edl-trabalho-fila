@@ -6,8 +6,13 @@ import java.util.List;
 import java.util.Random;
 
 public class GeradorDesistencia {
+    private FilaPrioritaria<Senha> fila;
+
+    public GeradorDesistencia(FilaPrioritaria<Senha> fila) {
+        this.fila = fila;
+    }
+
     public void calcularDesistencias() {
-        FilaPrioritaria fila = FilaPrioritaria.getInstance();
         List<Senha> aguardando = new ArrayList<>();
 
         int total = fila.getTamanhoTotal();

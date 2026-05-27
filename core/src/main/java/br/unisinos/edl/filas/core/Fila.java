@@ -18,7 +18,6 @@ public class Fila<T> {
         return inicio;
     }
 
-
     public void enfileirar(T elemento) {
         No<T> novoNo = new No<>(elemento);
         if (estaVazia()) {
