@@ -3,6 +3,7 @@ package br.unisinos.edl.filas.core;
 import br.unisinos.edl.filas.core.No;
 
 public class Fila<T> {
+
     private No<T> inicio;
     private No<T> fim;
     private int tamanho;
@@ -11,6 +12,11 @@ public class Fila<T> {
         this.inicio = null;
         this.fim = null;
         this.tamanho = 0;
+    }
+
+    public No<T> getInicio() {
+        this.inicio = inicio;
+        return inicio;
     }
 
 

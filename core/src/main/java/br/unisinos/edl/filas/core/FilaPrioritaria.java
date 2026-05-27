@@ -5,6 +5,18 @@ import java.util.List;
 
 import br.unisinos.edl.filas.core.dominio.Senha;
 
+public class FilaPrioritaria {
+    private static FilaPrioritaria singleton;
+    private int proximoNumero = 1;
+    private final Fila<Senha> filaNormal;
+    private final Fila<Senha> filaPrioridade;
+
+public class FilaPrioritaria<T> {
+    private static FilaPrioritaria<Senha> instancia; //Criar singleton
+    private Fila<T> filaNormal;
+    private Fila<T> filaPrioritaria;
+    private int contadorNormaisChamadas;
+
 public class FilaPrioritaria<T> {
     private Fila<T> filaNormal;
     private Fila<T> filaPrioritaria;
@@ -16,14 +28,31 @@ public class FilaPrioritaria<T> {
         this.contadorNormaisChamadas = 0;
     }
 
+    public static FilaPrioritaria get() {
+        return singleton;
+
+    public static FilaPrioritaria<Senha> get() {
+        if (instancia == null) {
+            instancia = new FilaPrioritaria<>();
+        }
+        return instancia;
+    }
+
+    public Fila<T> getFilaPrioritaria() {
+        return filaPrioritaria;
+    }
+
+    public Fila<T> getFilaNormal() {
+        return filaNormal;
+    }
+
     public void enfileirar(T elemento, boolean ehPrioritario) {
         if (ehPrioritario) {
             filaPrioritaria.enfileirar(elemento);
         } else {
             filaNormal.enfileirar(elemento);
         }
-    }
-
+        
     public T desenfileirar() {
         if (!filaNormal.estaVazia() && !filaPrioritaria.estaVazia()) {
             if (contadorNormaisChamadas < 2) {
@@ -43,6 +72,15 @@ public class FilaPrioritaria<T> {
 
         if (!filaNormal.estaVazia()) {
 
+    public List<Senha> proximasSenhas(int quantidade) {
+        return new ArrayList<>();
+
+    public T espiarProximo() {
+        if (!filaNormal.estaVazia() && !filaPrioritaria.estaVazia()) {
+            return (contadorNormaisChamadas < 2) ? filaNormal.espiar() : filaPrioritaria.espiar();
+        }
+        if (!filaPrioritaria.estaVazia()) return filaPrioritaria.espiar();
+        return filaNormal.espiar();
 
             if (contadorNormaisChamadas < 2) {
                 contadorNormaisChamadas++;

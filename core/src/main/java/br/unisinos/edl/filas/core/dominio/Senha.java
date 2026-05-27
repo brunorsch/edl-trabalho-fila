@@ -43,6 +43,10 @@ public class Senha {
         return String.format("%s%03d", tipo.prefixo, numero);
     }
 
+    public boolean ehPrioritario() {
+        return this.tipo == Tipo.PRIORITARIA;
+    }
+
     public enum Tipo {
         PRIORITARIA("P"), NORMAL("N");
 
