@@ -23,33 +23,20 @@ public class GeradorDesistencia {
 
     public List<Senha> calcularDesistencias() {
         List<Senha> aguardando = new ArrayList<>();
+        aguardando.addAll(fila.toListNormal());
+        aguardando.addAll(fila.toListPrioritaria());
 
-        int total = fila.getTamanhoTotal();
-
-        for (int i = 0; i < total; i++) {
-            Senha s = fila.desenfileirar();
-
-            if(s == null) {
-                break;
-            }
-
-            if (s.getStatus() == AGUARDANDO) {
-                aguardando.add(s);
-            }
-
-            fila.enfileirar(s, s.ehPrioritario());
-        }
-
-        Random rand = new Random();
         List<Senha> desistentes = new ArrayList<>();
 
-        aguardando.forEach(senha -> {
-            int chanceDesistencia = rand.nextInt(101);
-            if (chanceDesistencia >= 10 && chanceDesistencia <= 20) {
-                senha.setStatus(DESISTENCIA);
-                desistentes.add(senha);
-            }
-        });
+        aguardando.stream()
+            .filter(s -> s.getStatus() == AGUARDANDO)
+            .forEach(senha -> {
+                int chanceDesistencia = rand.nextInt(101);
+                if (chanceDesistencia >= 10 && chanceDesistencia <= 20) {
+                    senha.setStatus(DESISTENCIA);
+                    desistentes.add(senha);
+                }
+            });
 
         return desistentes;
     }
