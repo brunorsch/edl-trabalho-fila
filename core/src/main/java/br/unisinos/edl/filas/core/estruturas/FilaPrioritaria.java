@@ -1,5 +1,7 @@
 package br.unisinos.edl.filas.core.estruturas;
 
+import java.util.List;
+
 public class FilaPrioritaria<T> {
     private Fila<T> filaNormal;
     private Fila<T> filaPrioritaria;
@@ -82,6 +84,14 @@ public class FilaPrioritaria<T> {
 
     public int getTamanhoPrioritaria() {
         return filaPrioritaria.getTamanho();
+    }
+
+    public List<T> toListNormal() {
+        return filaNormal.toList();
+    }
+
+    public List<T> toListPrioritaria() {
+        return filaPrioritaria.toList();
     }
 }
 

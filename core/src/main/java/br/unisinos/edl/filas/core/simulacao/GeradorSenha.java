@@ -17,17 +17,18 @@ public class GeradorSenha {
     public List<Senha> gerarSenha() {
         List<Senha> senhas = new ArrayList<Senha>();
         Random rand = new Random();
-        //Gera numero aleatorio entre 0 e 2.
+
+        //Gera numero aleatorio de senhas novas, entre 0 e 2 senhas por tick.
         int quantSenha = rand.nextInt(3);
 
         for (int i = 0; i <= quantSenha; i++) {
-            //Probabilidade entre N e P.
+            //Probabilidade entre N e P, 30% de chance de ser prioritário.
             int chance = rand.nextInt(101);
             Tipo tipo = chance <= 30 ? PRIORITARIA : NORMAL;
 
             int numero;
 
-            if (tipo == Senha.Tipo.PRIORITARIA) {
+            if (tipo == PRIORITARIA) {
                 numero = ++contadorPrioritaria;
             } else {
                 numero = ++contadorNormal;

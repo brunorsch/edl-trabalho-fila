@@ -42,6 +42,9 @@ public class Pilha<T> {
         return tamanho;
     }
 
+    public List<T> paraLista() {
+        return paraLista(0);
+    }
 
     public List<T> paraLista(int limite) {
         List<T> lista = new ArrayList<>();

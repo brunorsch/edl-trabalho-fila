@@ -1,5 +1,8 @@
 package br.unisinos.edl.filas.core.simulacao;
 
+import static br.unisinos.edl.filas.core.dominio.models.Senha.Status.AGUARDANDO;
+import static br.unisinos.edl.filas.core.dominio.models.Senha.Status.DESISTENCIA;
+
 import br.unisinos.edl.filas.core.dominio.models.Senha;
 import br.unisinos.edl.filas.core.estruturas.FilaPrioritaria;
 
@@ -14,29 +17,37 @@ public class GeradorDesistencia {
         this.fila = fila;
     }
 
-    public void calcularDesistencias() {
+    public List<Senha> calcularDesistencias() {
         List<Senha> aguardando = new ArrayList<>();
 
         int total = fila.getTamanhoTotal();
 
         for (int i = 0; i < total; i++) {
             Senha s = fila.desenfileirar();
-            if (s != null && s.getStatus() == Senha.Status.AGUARDANDO) {
+
+            if(s == null) {
+                continue;
+            }
+
+            if (s.getStatus() == AGUARDANDO) {
                 aguardando.add(s);
             }
-            // Respeitar se é prioritário ou não
-            if (s != null) {
-                fila.enfileirar(s, s.ehPrioritario());
-            }
+
+            fila.enfileirar(s, s.ehPrioritario());
         }
 
         Random rand = new Random();
+        List<Senha> desistentes = new ArrayList<>();
+
         aguardando.forEach(senha -> {
             int chanceDesistencia = rand.nextInt(101);
             if (chanceDesistencia >= 10 && chanceDesistencia <= 20) {
-                senha.setStatus(Senha.Status.DESISTENCIA);
+                senha.setStatus(DESISTENCIA);
+                desistentes.add(senha);
             }
         });
+
+        return desistentes;
     }
 }
 
