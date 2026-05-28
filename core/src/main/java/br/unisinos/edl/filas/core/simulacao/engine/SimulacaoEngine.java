@@ -1,24 +1,29 @@
 package br.unisinos.edl.filas.core.simulacao.engine;
 
 import static br.unisinos.edl.filas.core.simulacao.engine.EventoCiclo.eventoFinal;
-import static br.unisinos.edl.filas.core.simulacao.engine.TipoEvento.SIMULACAO_FINALIZADA;
+import static br.unisinos.edl.filas.core.simulacao.engine.EventoCiclo.eventoPosto;
+import static br.unisinos.edl.filas.core.simulacao.engine.EventoCiclo.eventoSenha;
+import static br.unisinos.edl.filas.core.simulacao.engine.TipoEvento.POSTO_ATIVADO;
+import static br.unisinos.edl.filas.core.simulacao.engine.TipoEvento.POSTO_DESATIVADO;
+import static java.util.Collections.emptyList;
 
 import br.unisinos.edl.filas.core.dominio.CicloDeAtendimento;
 import br.unisinos.edl.filas.core.dominio.GerenciadorPosto;
+import br.unisinos.edl.filas.core.dominio.models.Posto;
 import br.unisinos.edl.filas.core.dominio.models.Senha;
+import br.unisinos.edl.filas.core.dominio.models.Senha.Status;
 import br.unisinos.edl.filas.core.estruturas.FilaPrioritaria;
 import br.unisinos.edl.filas.core.simulacao.ControladorDinamicoPostos;
 import br.unisinos.edl.filas.core.simulacao.GeradorDesistencia;
 import br.unisinos.edl.filas.core.simulacao.GeradorSenha;
-import br.unisinos.edl.filas.core.simulacao.engine.SimulacaoMode;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class SimulacaoEngine {
     private final FilaPrioritaria<Senha> fila;
     private final GerenciadorPosto gerenciadorPosto;
-    private final GeradorDesistencia geradorDesistencia;
     private final CicloDeAtendimento cicloDeAtendimento;
     private final ControladorDinamicoPostos controladorDinamicoPostos;
     private final SimulacaoMode mode;
@@ -36,26 +41,28 @@ public class SimulacaoEngine {
     }
 
     public SimulacaoEngine(SimulacaoMode mode) {
+        this.tickAtual = 0;
+        this.encerrada = false;
+        this.totalGeradas = 0;
+        this.totalDesistencias = 0;
+        this.totalAtendidas = 0;
+
+        this.fila = new FilaPrioritaria<>();
+        final GeradorDesistencia geradorDesistencia = new GeradorDesistencia(fila);
         final GeradorSenha geradorSenha = new GeradorSenha();
         this.gerenciadorPosto = new GerenciadorPosto();
 
-        this.fila = new FilaPrioritaria<>();
-        var postos = gerenciadorPosto.getPostos();
+        var senhasInicias = geradorSenha.gerarIniciais();
+        totalGeradas += senhasInicias.size();
+        senhasInicias.forEach(senha -> fila.enfileirar(senha, senha.ehPrioritario()));
 
-        this.geradorDesistencia = new GeradorDesistencia(fila);
-        this.cicloDeAtendimento = new CicloDeAtendimento(fila, postos, geradorSenha, geradorDesistencia);
+        this.cicloDeAtendimento = new CicloDeAtendimento(fila, gerenciadorPosto, geradorSenha, geradorDesistencia);
         this.mode = mode;
         if (mode == SimulacaoMode.MANUAL) {
             this.controladorDinamicoPostos = null;
         } else {
             this.controladorDinamicoPostos = new ControladorDinamicoPostos(gerenciadorPosto);
         }
-
-        this.tickAtual = 0;
-        this.encerrada = false;
-        this.totalGeradas = 0;
-        this.totalDesistencias = 0;
-        this.totalAtendidas = 0;
     }
 
     public SimulacaoSnapshot tick() {
@@ -64,11 +71,10 @@ public class SimulacaoEngine {
         }
 
         var eventos = new ArrayList<EventoCiclo>();
-        var postos = gerenciadorPosto.getPostos();
 
-        var eventosPostos = (mode == SimulacaoMode.AUTO && controladorDinamicoPostos != null)
+        List<EventoCiclo> eventosPostos = (mode == SimulacaoMode.AUTO && controladorDinamicoPostos != null)
                 ? controladorDinamicoPostos.decidir()
-                : new ArrayList<EventoCiclo>();
+                : emptyList();
         var resultadoCiclo = cicloDeAtendimento.executarTick();
         var eventosSenhas = resultadoCiclo.toEventos();
 
@@ -81,28 +87,7 @@ public class SimulacaoEngine {
 
         tickAtual++;
 
-        List<Senha> ultimasAtendidas = cicloDeAtendimento.getSenhasAtendidas().paraLista(10);
-        List<Senha> proximasDuas = new ArrayList<>();
-        for (int i = 0; i < 2; i++) {
-            Senha proxima = fila.espiarProximo();
-            if (proxima != null) {
-                proximasDuas.add(proxima);
-            }
-        }
-
-        return new SimulacaoSnapshot(
-                tickAtual,
-                fila.toListNormal(),
-                fila.toListPrioritaria(),
-                proximasDuas,
-                postos,
-                ultimasAtendidas,
-                totalAtendidas,
-                totalGeradas,
-                totalDesistencias,
-                eventos,
-                false
-        );
+        return getSnapshot(eventos);
     }
 
     public SimulacaoSnapshot encerrar() {
@@ -135,61 +120,24 @@ public class SimulacaoEngine {
         return snapshotFinal;
     }
 
-    public boolean isEncerrada() {
-        return encerrada;
-    }
+    public EventoCiclo desistenciaIndividual(String numeroExibicao) {
+        var todasSenhas = new ArrayList<Senha>();
+        todasSenhas.addAll(fila.getFilaNormal().toList());
+        todasSenhas.addAll(fila.getFilaPrioritaria().toList());
 
-    public SimulacaoMode getMode() {
-        return mode;
-    }
-
-    public SimulacaoSnapshot getSnapshot() {
-        var postos = gerenciadorPosto.getPostos();
-        List<Senha> ultimasAtendidas = cicloDeAtendimento.getSenhasAtendidas().paraLista(10);
-        List<Senha> proximasDuas = new ArrayList<>();
-        for (int i = 0; i < 2; i++) {
-            Senha proxima = fila.espiarProximo();
-            if (proxima != null) {
-                proximasDuas.add(proxima);
-            }
-        }
-
-        return new SimulacaoSnapshot(
-                tickAtual,
-                fila.toListNormal(),
-                fila.toListPrioritaria(),
-                proximasDuas,
-                postos,
-                ultimasAtendidas,
-                totalAtendidas,
-                totalGeradas,
-                totalDesistencias,
-                new ArrayList<>(),
-                this.encerrada
-        );
-    }
-
-    public void desistenciaIndividual(String numeroExibicao) {
-        for (Senha senha : fila.getFilaNormal().toList()) {
+        for (Senha senha : todasSenhas) {
             if (senha.getNumeroExibicao().equals(numeroExibicao)) {
-                senha.setStatus(Senha.Status.DESISTENCIA);
+                senha.setStatus(Status.DESISTENCIA);
                 fila.removerElemento(senha);
                 totalDesistencias++;
-                return;
+                return eventoSenha(TipoEvento.DESISTENCIA, "Senha desistiu: " + numeroExibicao, senha);
             }
         }
-        for (Senha senha : fila.getFilaPrioritaria().toList()) {
-            if (senha.getNumeroExibicao().equals(numeroExibicao)) {
-                senha.setStatus(Senha.Status.DESISTENCIA);
-                fila.removerElemento(senha);
-                totalDesistencias++;
-                return;
-            }
-        }
+
         throw new IllegalArgumentException("Senha não encontrada: " + numeroExibicao);
     }
 
-    public void adicionarPosto() {
+    public EventoCiclo adicionarPosto() {
         if (mode != SimulacaoMode.MANUAL) {
             throw new IllegalStateException("Apenas em modo MANUAL");
         }
@@ -203,10 +151,14 @@ public class SimulacaoEngine {
         if (max >= 5) {
             throw new IllegalStateException("Máximo de postos atingido");
         }
-        gerenciadorPosto.ativarPosto(max + 1);
+        int novoSlot = max + 1;
+        gerenciadorPosto.ativarPosto(novoSlot);
+
+        var postoAdicionado = gerenciadorPosto.getPosto(novoSlot).orElse(new Posto(novoSlot));
+        return eventoPosto(POSTO_ATIVADO, "Posto " + novoSlot + " ativado", postoAdicionado);
     }
 
-    public void removerPosto() {
+    public EventoCiclo removerPosto() {
         if (mode != SimulacaoMode.MANUAL) {
             throw new IllegalStateException("Apenas em modo MANUAL");
         }
@@ -215,11 +167,42 @@ public class SimulacaoEngine {
             throw new IllegalStateException("Mínimo de postos atingido");
         }
         int maxSlot = 0;
-        for (var posto : postos) {
-            if (posto.getSlot() > maxSlot) {
-                maxSlot = posto.getSlot();
-            }
-        }
-        gerenciadorPosto.desativarPosto(maxSlot);
+        Posto postoRemovido = gerenciadorPosto.desativarPosto(maxSlot);
+        return eventoPosto(POSTO_DESATIVADO, "Posto " + maxSlot + " desativado", postoRemovido);
+    }
+
+    public boolean estaEncerrada() {
+        return encerrada;
+    }
+
+    public SimulacaoMode getMode() {
+        return mode;
+    }
+
+    public SimulacaoSnapshot getSnapshot(List<EventoCiclo> eventos) {
+        var postos = gerenciadorPosto.getPostos();
+        int quantidadeProximas = Math.max(3, postos.size());
+
+        return new SimulacaoSnapshot(
+            tickAtual,
+            fila.toListNormal(),
+            fila.toListPrioritaria(),
+            fila.espiarProximas(quantidadeProximas),
+            postos,
+            getUltimasSenhasAtendidas(),
+            totalAtendidas,
+            totalGeradas,
+            totalDesistencias,
+            eventos,
+            this.encerrada
+        );
+    }
+
+    public SimulacaoSnapshot getSnapshot(EventoCiclo eventoCiclo) {
+        return getSnapshot(List.of(eventoCiclo));
+    }
+
+    public List<Senha> getUltimasSenhasAtendidas() {
+        return cicloDeAtendimento.getSenhasAtendidas().paraLista(10);
     }
 }

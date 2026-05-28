@@ -7,7 +7,7 @@ interface StatisticsProps {
   tickAtual: number;
 }
 
-export function Statistics({
+export function Stats({
   totalGeradas,
   totalAtendidas,
   totalDesistencias,

@@ -7,7 +7,7 @@ interface ModeSelectionProps {
   onStart: (state: SimulacaoResponse, mode: SimulacaoModeDTO) => void;
 }
 
-export function ModeSelection({ onStart }: ModeSelectionProps) {
+export function SeletorModo({ onStart }: ModeSelectionProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 

@@ -13,7 +13,10 @@ export function useSimulation(initialState: SimulacaoResponse, mode: SimulacaoMo
   const [isPaused, setIsPaused] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [countdown, setCountdown] = useState(10);
+  const [tickNotification, setTickNotification] = useState<string | null>(null);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const countdownRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   const handleError = (err: unknown) => {
     const message = err instanceof Error ? err.message : "Erro na simulação";
@@ -27,6 +30,8 @@ export function useSimulation(initialState: SimulacaoResponse, mode: SimulacaoMo
     try {
       const newState = await tickSimulacao();
       setState(newState);
+      setTickNotification(`Tick #${newState.tickAtual} processado`);
+      setTimeout(() => setTickNotification(null), 2000);
     } catch (err) {
       handleError(err);
     } finally {
@@ -98,17 +103,35 @@ export function useSimulation(initialState: SimulacaoResponse, mode: SimulacaoMo
     }
   }, []);
 
-  // Auto-tick every 10 seconds in AUTO mode
   useEffect(() => {
     if (mode === "AUTO" && !isPaused && !state.encerrada) {
+      setCountdown(10);
+      countdownRef.current = setInterval(() => {
+        setCountdown((prev) => {
+          if (prev <= 1) return 10;
+          return prev - 1;
+        });
+      }, 1000);
       intervalRef.current = setInterval(() => {
-        tickSimulacao().then(setState).catch(handleError);
+        tickSimulacao()
+          .then((newState) => {
+            setState(newState);
+            setTickNotification(`Tick #${newState.tickAtual} processado`);
+            setTimeout(() => setTickNotification(null), 2000);
+            setCountdown(10);
+          })
+          .catch(handleError);
       }, 10000);
     }
+
     return () => {
       if (intervalRef.current) {
         clearInterval(intervalRef.current);
         intervalRef.current = null;
+      }
+      if (countdownRef.current) {
+        clearInterval(countdownRef.current);
+        countdownRef.current = null;
       }
     };
   }, [mode, isPaused, state.encerrada]);
@@ -118,6 +141,8 @@ export function useSimulation(initialState: SimulacaoResponse, mode: SimulacaoMo
     isPaused,
     isLoading,
     error,
+    countdown,
+    tickNotification,
     tick,
     encerrar,
     pause,

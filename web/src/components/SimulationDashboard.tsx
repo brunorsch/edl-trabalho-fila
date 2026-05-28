@@ -8,10 +8,10 @@ import {
 } from "lucide-react";
 import { useSimulation } from "../hooks/useSimulation";
 import type { SimulacaoResponse, SimulacaoModeDTO } from "../types";
-import { QueueVisualization } from "./QueueVisualization";
+import { FilaVisualization } from "./FilaVisualization.tsx";
 import { PostoVisualization } from "./PostoVisualization";
-import { Statistics } from "./Statistics";
-import { EventLog } from "./EventLog";
+import { Stats } from "./Stats.tsx";
+import { LogEventos } from "./LogEventos.tsx";
 
 interface SimulationDashboardProps {
   initialState: SimulacaoResponse;
@@ -29,6 +29,8 @@ export function SimulationDashboard({
     isPaused,
     isLoading,
     error,
+    countdown,
+    tickNotification,
     tick,
     encerrar,
     pause,
@@ -40,11 +42,17 @@ export function SimulationDashboard({
 
   return (
     <div className="min-h-screen bg-slate-900 text-white flex flex-col">
-      {/* Error toast */}
+      {/* Notifications */}
       {error && (
         <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 flex items-center gap-2 px-4 py-3 rounded-xl bg-red-500/20 border border-red-500/40 text-red-200 text-sm shadow-lg backdrop-blur-sm">
           <AlertCircle size={16} />
           {error}
+        </div>
+      )}
+      {tickNotification && (
+        <div className="fixed top-4 right-4 z-50 flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-200 text-sm shadow-lg backdrop-blur-sm animate-pulse">
+          <Play size={14} />
+          {tickNotification}
         </div>
       )}
 
@@ -67,6 +75,19 @@ export function SimulationDashboard({
             <span className="text-sm text-white/50 font-mono">
               Tick #{state.tickAtual}
             </span>
+            {mode === "AUTO" && !state.encerrada && (
+              <div className="flex items-center gap-2">
+                <div className="w-24 h-1.5 rounded-full bg-white/10 overflow-hidden">
+                  <div
+                    className="h-full rounded-full bg-emerald-400 transition-all duration-1000 ease-linear"
+                    style={{ width: `${(countdown / 10) * 100}%` }}
+                  />
+                </div>
+                <span className="text-xs text-emerald-300/70 font-mono w-8">
+                  {isPaused ? "Pausado" : `${countdown}s`}
+                </span>
+              </div>
+            )}
           </div>
 
           <div className="flex items-center gap-2">
@@ -121,7 +142,7 @@ export function SimulationDashboard({
       {/* Main content */}
       <main className="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 py-6">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 h-full">
-          <QueueVisualization
+          <FilaVisualization
             normal={state.normal}
             prioritaria={state.prioritaria}
             proximasDuas={state.proximasDuas}
@@ -131,19 +152,21 @@ export function SimulationDashboard({
 
           <PostoVisualization
             postos={state.postos}
+            atendidas={state.atendidas}
             isManual={mode === "MANUAL" && !state.encerrada}
+            encerrada={state.encerrada}
             onAddPosto={addPosto}
             onRemovePosto={removePosto}
           />
 
           <section className="lg:col-span-3 flex flex-col gap-4">
-            <Statistics
+            <Stats
               totalGeradas={state.totalGeradas}
               totalAtendidas={state.totalAtendidas}
               totalDesistencias={state.totalDesistencias}
               tickAtual={state.tickAtual}
             />
-            <EventLog eventos={state.eventosUltimoCiclo} />
+            <LogEventos eventos={state.eventosUltimoCiclo} />
           </section>
         </div>
       </main>

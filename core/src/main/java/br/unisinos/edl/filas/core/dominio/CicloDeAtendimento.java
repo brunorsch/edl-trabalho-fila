@@ -1,8 +1,6 @@
 package br.unisinos.edl.filas.core.dominio;
 
-import static br.unisinos.edl.filas.core.dominio.models.Senha.Status.EM_ATENDIMENTO;
 import static br.unisinos.edl.filas.core.simulacao.engine.EventoCiclo.eventoSenha;
-import static br.unisinos.edl.filas.core.simulacao.engine.TipoEvento.ATENDIMENTO_FINALIZADO;
 import static br.unisinos.edl.filas.core.simulacao.engine.TipoEvento.DESISTENCIA;
 import static br.unisinos.edl.filas.core.simulacao.engine.TipoEvento.SENHA_ATENDIDA;
 import static br.unisinos.edl.filas.core.simulacao.engine.TipoEvento.SENHA_GERADA;
@@ -17,8 +15,10 @@ import br.unisinos.edl.filas.core.simulacao.engine.EventoCiclo;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class CicloDeAtendimento {
+    private static final Logger log = Logger.getLogger(CicloDeAtendimento.class.getName());
     public record ResultadoCiclo(
             List<Senha> geradas,
             List<Senha> desistencias,
@@ -42,16 +42,16 @@ public class CicloDeAtendimento {
     }
 
     private final FilaPrioritaria<Senha> fila;
-    private final List<Posto> postos;
+    private final GerenciadorPosto gerenciadorPosto;
     private final GeradorSenha geradorSenha;
     private final GeradorDesistencia geradorDesistencia;
 
     private final Pilha<Senha> senhasAtendidas;
 
     public CicloDeAtendimento(
-        FilaPrioritaria<Senha> fila, List<Posto> postos, GeradorSenha geradorSenha, GeradorDesistencia geradorDesistencia) {
+        FilaPrioritaria<Senha> fila, GerenciadorPosto gerenciadorPosto, GeradorSenha geradorSenha, GeradorDesistencia geradorDesistencia) {
         this.fila = fila;
-        this.postos = postos;
+        this.gerenciadorPosto = gerenciadorPosto;
         this.geradorSenha = geradorSenha;
         this.geradorDesistencia = geradorDesistencia;
         this.senhasAtendidas = new Pilha<>();
@@ -76,14 +76,14 @@ public class CicloDeAtendimento {
     }
 
     private void finalizarAtendimentosAnteriores() {
-        postos.stream()
+        gerenciadorPosto.getPostos().stream()
             .filter(Posto::isEmAtendimento)
             .map(Posto::finalizarAtendimento)
             .forEach(senhasAtendidas::empilhar);
     }
 
     private List<Senha> gerarEEnfileirarSenhas() {
-        List<Senha> geradas = geradorSenha.gerarSenha();
+        List<Senha> geradas = geradorSenha.gerarSenhas();
         geradas.forEach(s -> fila.enfileirar(s, s.ehPrioritario()));
         return geradas;
     }
@@ -102,6 +102,8 @@ public class CicloDeAtendimento {
 
             if(removido) {
                 desistencias.add(senha);
+            } else {
+                log.warning("Senha marcada como desistente, mas não encontrada na fila: " + senha.getNumeroExibicao());
             }
         }
 
@@ -110,7 +112,7 @@ public class CicloDeAtendimento {
 
     private List<Senha> ocuparPostosLivres() {
         List<Senha> emAtendimento = new ArrayList<>();
-        for (Posto posto : postos) {
+        for (Posto posto : gerenciadorPosto.getPostos()) {
             if (!posto.isEmAtendimento()) {
                 Senha proxima = fila.desenfileirar();
                 if (proxima != null) {

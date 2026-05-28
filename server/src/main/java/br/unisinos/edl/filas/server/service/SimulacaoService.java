@@ -1,5 +1,10 @@
 package br.unisinos.edl.filas.server.service;
 
+import static java.util.Collections.emptyList;
+
+import java.util.ArrayList;
+import java.util.Collections;
+
 import br.unisinos.edl.filas.core.simulacao.engine.SimulacaoEngine;
 import br.unisinos.edl.filas.core.simulacao.engine.SimulacaoMode;
 import br.unisinos.edl.filas.core.simulacao.engine.SimulacaoSnapshot;
@@ -16,7 +21,7 @@ public class SimulacaoService {
 
     public SimulacaoResponse iniciarSimulacao(SimulacaoMode modo) {
         synchronized (lock) {
-            if (engine != null && !engine.isEncerrada()) {
+            if (engine != null && !engine.estaEncerrada()) {
                 throw new IllegalStateException("Simulação já em andamento");
             }
             this.engine = new SimulacaoEngine(modo);
@@ -31,7 +36,7 @@ public class SimulacaoService {
             if (engine == null) {
                 throw new IllegalStateException("Simulação não iniciada");
             }
-            if (engine.isEncerrada()) {
+            if (engine.estaEncerrada()) {
                 return SimulacaoMapper.toResponse(lastSnapshot, currentMode);
             }
             lastSnapshot = engine.tick();
@@ -44,10 +49,10 @@ public class SimulacaoService {
             if (engine == null) {
                 throw new IllegalStateException("Simulação não iniciada");
             }
-            if (engine.isEncerrada()) {
+            if (engine.estaEncerrada()) {
                 return SimulacaoMapper.toResponse(lastSnapshot, currentMode);
             }
-            lastSnapshot = engine.getSnapshot();
+            lastSnapshot = engine.getSnapshot(emptyList());
             return SimulacaoMapper.toResponse(lastSnapshot, currentMode);
         }
     }
@@ -57,7 +62,7 @@ public class SimulacaoService {
             if (engine == null) {
                 throw new IllegalStateException("Simulação não iniciada");
             }
-            if (engine.isEncerrada()) {
+            if (engine.estaEncerrada()) {
                 return SimulacaoMapper.toResponse(lastSnapshot, currentMode);
             }
             lastSnapshot = engine.encerrar();
@@ -70,8 +75,8 @@ public class SimulacaoService {
             if (engine == null) {
                 throw new IllegalStateException("Simulação não iniciada");
             }
-            engine.adicionarPosto();
-            lastSnapshot = engine.getSnapshot();
+            var evento = engine.adicionarPosto();
+            lastSnapshot = engine.getSnapshot(evento);
             return SimulacaoMapper.toResponse(lastSnapshot, currentMode);
         }
     }
@@ -81,8 +86,8 @@ public class SimulacaoService {
             if (engine == null) {
                 throw new IllegalStateException("Simulação não iniciada");
             }
-            engine.removerPosto();
-            lastSnapshot = engine.getSnapshot();
+            var evento = engine.removerPosto();
+            lastSnapshot = engine.getSnapshot(evento);
             return SimulacaoMapper.toResponse(lastSnapshot, currentMode);
         }
     }
@@ -92,8 +97,8 @@ public class SimulacaoService {
             if (engine == null) {
                 throw new IllegalStateException("Simulação não iniciada");
             }
-            engine.desistenciaIndividual(numeroExibicao);
-            lastSnapshot = engine.getSnapshot();
+            var evento = engine.desistenciaIndividual(numeroExibicao);
+            lastSnapshot = engine.getSnapshot(evento);
             return SimulacaoMapper.toResponse(lastSnapshot, currentMode);
         }
     }

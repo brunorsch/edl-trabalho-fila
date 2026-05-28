@@ -1,7 +1,7 @@
 import { Users, Hand } from "lucide-react";
 import type { SenhaDTO } from "../types";
 
-interface QueueVisualizationProps {
+interface FilaVisualizationProps {
   normal: SenhaDTO[];
   prioritaria: SenhaDTO[];
   proximasDuas: SenhaDTO[];
@@ -39,13 +39,13 @@ function SenhaBadge({
   );
 }
 
-export function QueueVisualization({
+export function FilaVisualization({
   normal,
   prioritaria,
   proximasDuas,
   isManual,
   onDesistencia,
-}: QueueVisualizationProps) {
+}: FilaVisualizationProps) {
   const aguardandoNormal = normal.filter((s) => s.status === "AGUARDANDO");
   const aguardandoPrioritaria = prioritaria.filter(
     (s) => s.status === "AGUARDANDO"
@@ -59,12 +59,16 @@ export function QueueVisualization({
 
   return (
     <section className="lg:col-span-5 flex flex-col gap-4">
-      {/* Próximas highlight */}
       {proximasDuas.length > 0 && (
         <div className="rounded-xl bg-amber-500/10 border border-amber-500/30 p-4">
-          <h3 className="text-xs font-semibold uppercase tracking-wider text-amber-300 mb-2">
-            Próximas a serem chamadas
-          </h3>
+          <div className="flex items-center justify-between mb-2">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-amber-300">
+              Próximas a serem chamadas
+            </h3>
+            <span className="text-xs text-amber-300/60 font-mono">
+              {proximasDuas.length} senha{proximasDuas.length > 1 ? "s" : ""}
+            </span>
+          </div>
           <div className="flex flex-wrap gap-2">
             {proximasDuas.map((s) => (
               <SenhaBadge key={s.numeroExibicao} senha={s} />

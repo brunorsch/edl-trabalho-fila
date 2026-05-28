@@ -2,6 +2,7 @@ package br.unisinos.edl.filas.core.estruturas;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Predicate;
 
 public class Fila<T> {
 
@@ -44,12 +45,18 @@ public class Fila<T> {
         return conteudo;
     }
 
-
     public T espiar() {
-        if (estaVazia()) return null;
-        return inicio.getDado();
+        return espiar(0);
     }
 
+    public T espiar(int indice) {
+        if (estaVazia()) return null;
+        No<T> atual = inicio;
+        for (int i = 0; i < indice; i++) {
+            atual = atual.getProximo();
+        }
+        return atual.getDado();
+    }
 
     public boolean removerElemento(T elemento) {
         if (estaVazia()) return false;

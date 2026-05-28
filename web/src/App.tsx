@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { ModeSelection } from "./components/ModeSelection";
+import { SeletorModo } from "./components/SeletorModo.tsx";
 import { SimulationDashboard } from "./components/SimulationDashboard";
 import type { SimulacaoResponse, SimulacaoModeDTO } from "./types";
 
@@ -15,7 +15,7 @@ function App() {
   }
 
   if (view === "selection" || !simulationState || !mode) {
-    return <ModeSelection onStart={handleStart} />;
+    return <SeletorModo onStart={handleStart} />;
   }
 
   return (

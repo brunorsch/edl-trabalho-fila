@@ -52,7 +52,7 @@ function getEventStyle(tipo: string): {
   };
 }
 
-export function EventLog({ eventos }: EventLogProps) {
+export function LogEventos({ eventos }: EventLogProps) {
   const reversed = [...eventos].reverse();
 
   return (

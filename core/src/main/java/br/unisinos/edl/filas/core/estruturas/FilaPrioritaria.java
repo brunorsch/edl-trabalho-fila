@@ -1,8 +1,11 @@
 package br.unisinos.edl.filas.core.estruturas;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class FilaPrioritaria<T> {
+    private static final Logger log = Logger.getLogger(FilaPrioritaria.class.getName());
     private Fila<T> filaNormal;
     private Fila<T> filaPrioritaria;
     private int contadorNormaisChamadas;
@@ -30,7 +33,10 @@ public class FilaPrioritaria<T> {
     }
 
     public T desenfileirar() {
-        if (!filaNormal.estaVazia() && !filaPrioritaria.estaVazia()) {
+        boolean temNormal = !filaNormal.estaVazia();
+        boolean temPrioritaria = !filaPrioritaria.estaVazia();
+
+        if (temNormal && temPrioritaria) {
             if (contadorNormaisChamadas < 2) {
                 contadorNormaisChamadas++;
                 return filaNormal.desenfileirar();
@@ -40,27 +46,53 @@ public class FilaPrioritaria<T> {
             }
         }
 
-        if (!filaPrioritaria.estaVazia()) {
+        if (temPrioritaria) {
             contadorNormaisChamadas = 0;
             return filaPrioritaria.desenfileirar();
         }
 
-        if (!filaNormal.estaVazia()) {
-            if (contadorNormaisChamadas < 2) {
-                contadorNormaisChamadas++;
-            }
+        if (temNormal) {
+            contadorNormaisChamadas++;
             return filaNormal.desenfileirar();
         }
 
         return null;
     }
 
-    public T espiarProximo() {
-        if (!filaNormal.estaVazia() && !filaPrioritaria.estaVazia()) {
-            return (contadorNormaisChamadas < 2) ? filaNormal.espiar() : filaPrioritaria.espiar();
+    public List<T> espiarProximas(int quantidade) {
+        var proximas = new ArrayList<T>();
+        int idxNormal = 0;
+        int idxPrioritaria = 0;
+        int contadorSimulado = contadorNormaisChamadas;
+
+        for (int i = 0; i < quantidade; i++) {
+            boolean temNormal = filaNormal.getTamanho() > idxNormal;
+            boolean temPrioritaria = filaPrioritaria.getTamanho() > idxPrioritaria;
+
+            if (temNormal && temPrioritaria) {
+                if (contadorSimulado < 2) {
+                    proximas.add(filaNormal.espiar(idxNormal++));
+                    contadorSimulado++;
+                } else {
+                    proximas.add(filaPrioritaria.espiar(idxPrioritaria++));
+                    contadorSimulado = 0;
+                }
+            } else if (temPrioritaria) {
+                proximas.add(filaPrioritaria.espiar(idxPrioritaria++));
+                contadorSimulado = 0;
+            } else if (temNormal) {
+                proximas.add(filaNormal.espiar(idxNormal++));
+                contadorSimulado++;
+            } else {
+                break;
+            }
         }
-        if (!filaPrioritaria.estaVazia()) return filaPrioritaria.espiar();
-        return filaNormal.espiar();
+
+        return proximas;
+    }
+
+    public List<T> espiarProximasDuas() {
+        return espiarProximas(2);
     }
 
     public boolean removerElemento(T elemento) {

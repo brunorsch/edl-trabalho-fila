@@ -1,7 +1,6 @@
 package br.unisinos.edl.filas.core.dominio;
 
 import br.unisinos.edl.filas.core.dominio.models.Posto;
-import br.unisinos.edl.filas.core.dominio.models.Senha;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,50 +16,35 @@ public class GerenciadorPosto {
         postos.add(new Posto(3));
     }
 
-    public Optional<Posto> getPostoLivre() {
-        return postos.stream()
-                .filter(p -> !p.isEmAtendimento())
-                .findFirst();
-    }
-
-    public void ativarPosto(int slot) {
+    public Posto ativarPosto(int slot) {
         if (postos.size() < 5 && slot <= 5 && !isSlotOcupado(slot)) {
-            postos.add(new Posto(slot));
+            var posto = new Posto(slot);
+            postos.add(posto);
+            return posto;
         }
+        return null;
     }
 
     private boolean isSlotOcupado(int slot) {
-        return postos.stream().anyMatch(posto -> posto.getSlot() == slot);
+        return getPosto(slot).isPresent();
     }
 
-    public void desativarPosto(int slot) {
+    public Posto desativarPosto(int slot) {
         if (postos.size() > 3) {
-            postos.stream()
-                    .filter(posto -> posto.getSlot() == slot)
-                    .findFirst()
-                    .ifPresent(posto -> postos.remove(posto));
-        }
+            return getPosto(slot).map(posto -> {
+                postos.remove(posto);
+                return posto;
+            }).orElse(null);
+        } else return null;
     }
 
-    public void ocuparPosto(int slot, Senha senha) {
-        postos.stream()
+    public Optional<Posto> getPosto(int slot) {
+        return postos.stream()
                 .filter(posto -> posto.getSlot() == slot)
-                .findFirst()
-                .ifPresent(posto -> posto.setSenha(senha));
-    }
-
-    public void liberarPosto(int slot) {
-        postos.stream()
-                .filter(posto -> posto.getSlot() == slot)
-                .findFirst()
-                .ifPresent(Posto::finalizarAtendimento);
-    }
-
-    public void listarPostos() {
-        postos.forEach(posto -> System.out.println(posto.toString()));
+                .findFirst();
     }
 
     public List<Posto> getPostos() {
-        return new ArrayList<>(postos);
+        return postos;
     }
 }
