@@ -1,6 +1,7 @@
 package br.unisinos.edl.filas.core.dominio.models;
 
 import static br.unisinos.edl.filas.core.dominio.models.Senha.Status.AGUARDANDO;
+import static br.unisinos.edl.filas.core.dominio.models.Senha.Status.EM_ATENDIMENTO;
 import static br.unisinos.edl.filas.core.dominio.models.Senha.Status.FINALIZADO;
 
 public class Senha {
@@ -35,7 +36,7 @@ public class Senha {
     }
 
     public void senhaEmAtendimento() {
-        this.status = AGUARDANDO;
+        this.status = EM_ATENDIMENTO;
     }
 
     public String getNumeroExibicao() {

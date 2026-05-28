@@ -35,3 +35,6 @@ bin/
 
 ### VS Code ###
 .vscode/
+
+## Front generated
+server/src/main/resources/static

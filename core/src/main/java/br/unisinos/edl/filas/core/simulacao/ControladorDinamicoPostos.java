@@ -32,8 +32,9 @@ public class ControladorDinamicoPostos {
         // Probabilidade de 15% de desativar um posto se houver mais de 3
         if (totalPostos > 3 && random.nextInt(100) < 15) {
             int slot = totalPostos;
+            var postoDesativado = gerenciador.getPostos().get(slot - 1);
             gerenciador.desativarPosto(slot);
-            eventos.add(new EventoCiclo(TipoEvento.POSTO_DESATIVADO, "Posto " + slot + " desativado", null));
+            eventos.add(eventoPosto(TipoEvento.POSTO_DESATIVADO, "Posto " + slot + " desativado", postoDesativado));
         }
 
         return eventos;
