@@ -1,7 +1,7 @@
-package br.unisinos.edl.filas.core.dominio;
+package br.unisinos.edl.filas.core.dominio.models;
 
-import static br.unisinos.edl.filas.core.dominio.Senha.Status.AGUARDANDO;
-import static br.unisinos.edl.filas.core.dominio.Senha.Status.FINALIZADO;
+import static br.unisinos.edl.filas.core.dominio.models.Senha.Status.AGUARDANDO;
+import static br.unisinos.edl.filas.core.dominio.models.Senha.Status.FINALIZADO;
 
 public class Senha {
     private final int numero;

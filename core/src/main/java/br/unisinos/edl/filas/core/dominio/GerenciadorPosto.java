@@ -1,13 +1,12 @@
-package br.unisinos.edl.filas.core;
+package br.unisinos.edl.filas.core.dominio;
 
-import br.unisinos.edl.filas.core.dominio.Posto;
-import br.unisinos.edl.filas.core.dominio.Senha;
+import br.unisinos.edl.filas.core.dominio.models.Posto;
+import br.unisinos.edl.filas.core.dominio.models.Senha;
 
 import java.util.ArrayList;
 import java.util.Optional;
 
 public class GerenciadorPosto {
-
     private ArrayList<Posto> postos;
 
     public GerenciadorPosto() {

@@ -1,6 +1,4 @@
-package br.unisinos.edl.filas.core;
-
-import br.unisinos.edl.filas.core.No;
+package br.unisinos.edl.filas.core.estruturas;
 
 import java.util.ArrayList;
 import java.util.List;

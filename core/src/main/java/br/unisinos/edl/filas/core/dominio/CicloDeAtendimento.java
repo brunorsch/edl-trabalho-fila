@@ -1,7 +1,11 @@
-package br.unisinos.edl.filas.core;
+package br.unisinos.edl.filas.core.dominio;
 
-import br.unisinos.edl.filas.core.dominio.Posto;
-import br.unisinos.edl.filas.core.dominio.Senha;
+import br.unisinos.edl.filas.core.dominio.models.Posto;
+import br.unisinos.edl.filas.core.dominio.models.Senha;
+import br.unisinos.edl.filas.core.estruturas.FilaPrioritaria;
+import br.unisinos.edl.filas.core.estruturas.No;
+import br.unisinos.edl.filas.core.simulacao.GeradorDesistencia;
+import br.unisinos.edl.filas.core.simulacao.GeradorSenha;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,4 +1,4 @@
-package br.unisinos.edl.filas.core;
+package br.unisinos.edl.filas.core.estruturas;
 
 public class No<T> {
     private T dado;

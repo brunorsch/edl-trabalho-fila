@@ -1,9 +1,4 @@
-package br.unisinos.edl.filas.core;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import br.unisinos.edl.filas.core.dominio.Senha;
+package br.unisinos.edl.filas.core.estruturas;
 
 public class FilaPrioritaria<T> {
     private Fila<T> filaNormal;

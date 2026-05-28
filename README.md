@@ -1,4 +1,8 @@
 # Arquitetura e build
+## Requisitos:
+- JDK 26 (SDKMAN: `sdk install java 26.0.1-amzn`)
+- Node.js 22 (NVM: `nvm install 22`)
+- Gradle 8.5 (SDKMAN: `sdk install gradle 8.5`)
 
 O projeto utiliza uma arquitetura **Gradle multi-module**.
 

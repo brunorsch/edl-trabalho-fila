@@ -1,14 +1,14 @@
-package br.unisinos.edl.filas.core;
+package br.unisinos.edl.filas.core.simulacao;
 
-import br.unisinos.edl.filas.core.dominio.Senha;
-import br.unisinos.edl.filas.core.dominio.Senha.Tipo;
+import br.unisinos.edl.filas.core.dominio.models.Senha;
+import br.unisinos.edl.filas.core.dominio.models.Senha.Tipo;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import static br.unisinos.edl.filas.core.dominio.Senha.Tipo.NORMAL;
-import static br.unisinos.edl.filas.core.dominio.Senha.Tipo.PRIORITARIA;
+import static br.unisinos.edl.filas.core.dominio.models.Senha.Tipo.NORMAL;
+import static br.unisinos.edl.filas.core.dominio.models.Senha.Tipo.PRIORITARIA;
 
 public class GeradorSenha {
     private int contadorNormal = 0;
