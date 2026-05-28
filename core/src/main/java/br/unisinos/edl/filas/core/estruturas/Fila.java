@@ -1,5 +1,8 @@
 package br.unisinos.edl.filas.core.estruturas;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Fila<T> {
 
     private No<T> inicio;
@@ -78,5 +81,15 @@ public class Fila<T> {
 
     public int getTamanho() {
         return tamanho;
+    }
+
+    public List<T> toList() {
+        List<T> lista = new ArrayList<>();
+        No<T> atual = inicio;
+        while (atual != null) {
+            lista.add(atual.getDado());
+            atual = atual.getProximo();
+        }
+        return lista;
     }
 }

@@ -4,6 +4,7 @@ import br.unisinos.edl.filas.core.dominio.models.Posto;
 import br.unisinos.edl.filas.core.dominio.models.Senha;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 public class GerenciadorPosto {
@@ -57,5 +58,9 @@ public class GerenciadorPosto {
 
     public void listarPostos() {
         postos.forEach(posto -> System.out.println(posto.toString()));
+    }
+
+    public List<Posto> getPostos() {
+        return new ArrayList<>(postos);
     }
 }
