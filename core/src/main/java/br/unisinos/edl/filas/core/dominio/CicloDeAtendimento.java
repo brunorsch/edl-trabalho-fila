@@ -77,6 +77,7 @@ public class CicloDeAtendimento {
 
     private void finalizarAtendimentosAnteriores() {
         postos.stream()
+            .filter(Posto::isEmAtendimento)
             .map(Posto::finalizarAtendimento)
             .forEach(senhasAtendidas::empilhar);
     }
