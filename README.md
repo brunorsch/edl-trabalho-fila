@@ -5,7 +5,7 @@ Stack:
 - TypeScript (React)
 
 ## Desenho de solução
-[Clique para navegar no ExcaliDraw]([https://excalidraw.com/#json=fpQtAaxtky0RpvPuw5s8d,LDya6RqO9DVAt-T0PWMarA](https://excalidraw.com/#json=rguYXZLMwnMguYSzohAuQ,Os3_xdYR4TBSDNSuCmAzfA))
+[Clique para navegar no ExcaliDraw](https://excalidraw.com/#json=rguYXZLMwnMguYSzohAuQ,Os3_xdYR4TBSDNSuCmAzfA)
 
 ## Board das tarefas
 [Projeto "Trabalho Fila" no GitHub Projects](https://github.com/users/brunorsch/projects/3)
