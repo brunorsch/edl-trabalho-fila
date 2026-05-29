@@ -5,9 +5,9 @@ Stack:
 - TypeScript (React)
 
 ## Desenho de solução
-[Clique para navegar no ExcaliDraw](https://excalidraw.com/#json=fpQtAaxtky0RpvPuw5s8d,LDya6RqO9DVAt-T0PWMarA)
+[Clique para navegar no ExcaliDraw]([https://excalidraw.com/#json=fpQtAaxtky0RpvPuw5s8d,LDya6RqO9DVAt-T0PWMarA](https://excalidraw.com/#json=rguYXZLMwnMguYSzohAuQ,Os3_xdYR4TBSDNSuCmAzfA))
 
-## Como executar o projeto:
+## Como executar o projeto
 - Acessar a tela de [Releases](https://github.com/brunorsch/edl-trabalho-fila/releases/tag/1.0.0) e baixar o arquivo server.jar da v1.0
 - Rodar com `java -jar server.jar`
 - O app fica disponível em [localhost:8080](http://localhost:8080)
