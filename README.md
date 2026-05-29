@@ -1,3 +1,17 @@
+# Simulador de Fila de Atendimento - EDL 2026/1
+Stack: 
+- Java 26
+- Spring Boot 4
+- TypeScript (React)
+
+## Desenho de solução
+[Clique para navegar no ExcaliDraw](https://excalidraw.com/#json=fpQtAaxtky0RpvPuw5s8d,LDya6RqO9DVAt-T0PWMarA)
+
+## Como executar o projeto:
+- Acessar a tela de [Releases](https://github.com/brunorsch/edl-trabalho-fila/releases/tag/1.0.0) e baixar o arquivo server.jar da v1.0
+- Rodar com `java -jar server.jar`
+- O app fica disponível em [localhost:8080](http://localhost:8080)
+
 # Arquitetura e build
 ## Requisitos:
 - JDK 26 (SDKMAN: `sdk install java 26.0.1-amzn`)
